@@ -12,6 +12,8 @@ import {
   IconBrandGithub
 } from '@tabler/icons-react';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://snapshot.dev';
+
 export const metadata = {
   title: "Snapshot - Turn screenshots into beautiful, share-ready visuals",
   description: "Create gorgeous screenshot mockups for your SaaS, apps, code, dashboards, or design presentations. Customizable frames, padding, shadow, and gradients.",
@@ -20,14 +22,14 @@ export const metadata = {
     title: "Snapshot - Turn screenshots into beautiful, share-ready visuals",
     description: "Create gorgeous screenshot mockups for your SaaS, apps, code, dashboards, or design presentations.",
     type: "website",
-    url: "https://snapshot.dev",
-    images: [{ url: "/logo.png", width: 512, height: 512, alt: "Snapshot Logo" }]
+    url: siteUrl,
+    images: [{ url: `${siteUrl}/og-image.png`, width: 1200, height: 630, alt: "Snapshot - Turn screenshots into beautiful, share-ready visuals" }]
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Snapshot - Beautiful Screenshot Mockups",
     description: "Turn screenshots into beautiful, share-ready visuals in seconds.",
-    images: ["/logo.png"]
+    images: [`${siteUrl}/og-image.png`]
   }
 };
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { EditorSettings, Preset } from '@/components/presets';
+import { IconUpload, IconRefresh } from '@tabler/icons-react';
 
 // Controls
 import { PresetsControl } from './controls/presets-control';
@@ -21,6 +22,8 @@ interface SidebarAreaProps {
   customSolid: string;
   setCustomSolid: (val: string) => void;
   mobileSidebarOpen: boolean;
+  onReset: () => void;
+  onUploadClick: () => void;
 }
 
 export const SidebarArea: React.FC<SidebarAreaProps> = ({
@@ -32,13 +35,33 @@ export const SidebarArea: React.FC<SidebarAreaProps> = ({
   updateSetting,
   customSolid,
   setCustomSolid,
-  mobileSidebarOpen
+  mobileSidebarOpen,
+  onReset,
+  onUploadClick
 }) => {
   return (
     <section className={cn(
-      "fixed inset-y-0 left-0 z-40 w-72 sm:w-80 border-r border-border flex flex-col overflow-y-auto select-none bg-card text-card-foreground transition-transform duration-300 ease-in-out md:relative md:translate-x-0",
+      "fixed top-16 bottom-0 left-0 z-40 w-72 sm:w-80 border-r border-border flex flex-col overflow-y-auto select-none bg-card text-card-foreground transition-transform duration-300 ease-in-out md:relative md:top-0 md:h-full md:translate-x-0",
       mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
     )}>
+      {/* Mobile Quick Actions (Reset & Swap) */}
+      <div className="p-3.5 border-b border-border flex items-center space-x-2 shrink-0 md:hidden bg-muted/20">
+        <button
+          onClick={onUploadClick}
+          className="flex-1 flex items-center justify-center space-x-1.5 py-1.5 px-3 rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground text-xs font-semibold transition-colors duration-200"
+        >
+          <IconUpload className="w-3.5 h-3.5 text-muted-foreground" />
+          <span>Swap</span>
+        </button>
+        <button
+          onClick={onReset}
+          className="flex-1 flex items-center justify-center space-x-1.5 py-1.5 px-3 rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground text-xs font-semibold transition-colors duration-200"
+        >
+          <IconRefresh className="w-3.5 h-3.5 text-muted-foreground" />
+          <span>Reset</span>
+        </button>
+      </div>
+
       <div className="flex-1">
         {/* 1. Presets */}
         <PresetsControl

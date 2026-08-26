@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://snapshot.dev';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://snapshot.dev';
   return [
     {
       url: baseUrl,

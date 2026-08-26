@@ -1,11 +1,12 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://snapshot.dev';
   return {
     rules: {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://snapshot.dev/sitemap.xml',
+    sitemap: `${siteUrl}/sitemap.xml`,
   };
 }

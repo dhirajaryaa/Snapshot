@@ -318,12 +318,14 @@ export function SnapshotEditor() {
           customSolid={customSolid}
           setCustomSolid={setCustomSolid}
           mobileSidebarOpen={mobileSidebarOpen}
+          onReset={handleReset}
+          onUploadClick={triggerFileInput}
         />
 
-        {/* Drawer Backdrop Overlay (Mobile only) */}
+        {/* Drawer Backdrop Overlay (Mobile only, bounds adjusted under the header) */}
         {mobileSidebarOpen && (
           <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-[1px] z-30 md:hidden animate-in fade-in duration-200"
+            className="fixed top-16 bottom-0 left-0 right-0 bg-black/40 backdrop-blur-[1px] z-30 md:hidden animate-in fade-in duration-200"
             onClick={() => setMobileSidebarOpen(false)}
           />
         )}
