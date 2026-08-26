@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { EditorSettings } from '@/components/presets';
 import { WindowFrame } from '../window-frame';
-import { IconUpload, IconSparkles, IconInfoCircle } from '@tabler/icons-react';
+import { IconUpload, IconSparkles, IconInfoCircle, IconZoomIn, IconZoomOut } from '@tabler/icons-react';
 
 interface CanvasAreaProps {
   imageUrl: string | null;
@@ -31,12 +31,116 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
   onDrop,
   getBackgroundStyles
 }) => {
+  // Infinite Canvas State
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [isSpacePressed, setIsSpacePressed] = useState(false);
+  const lastPointer = useRef({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLElement>(null);
+
+  // Handle Spacebar detection for panning
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && (e.target === document.body || (e.target as HTMLElement).tagName === 'SECTION')) {
+        e.preventDefault();
+        setIsSpacePressed(true);
+        document.body.style.cursor = 'grab';
+      }
+    };
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        setIsSpacePressed(false);
+        setIsPanning(false);
+        document.body.style.cursor = 'default';
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      document.body.style.cursor = 'default';
+    };
+  }, []);
+
+  // Native Non-Passive Wheel Event Listener to prevent Browser Default Zooming (Ctrl+Scroll)
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleWheelNative = (e: WheelEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault(); // Prevents browser page zoom
+        const zoomSensitivity = 0.003;
+        setScale(prevScale => Math.min(Math.max(0.2, prevScale - e.deltaY * zoomSensitivity), 3));
+      } else if (isSpacePressed) {
+        e.preventDefault();
+      } else {
+        // Pan with normal scroll wheel
+        setPosition(prev => ({
+          x: prev.x - e.deltaX,
+          y: prev.y - e.deltaY
+        }));
+      }
+    };
+
+    container.addEventListener('wheel', handleWheelNative, { passive: false });
+    return () => {
+      container.removeEventListener('wheel', handleWheelNative);
+    };
+  }, [isSpacePressed]);
+
+  // Pointer events for dragging
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (!imageUrl) return;
+
+    // Middle click OR Left click + Space
+    if (e.button === 1 || (e.button === 0 && isSpacePressed)) {
+      e.preventDefault();
+      setIsPanning(true);
+      document.body.style.cursor = 'grabbing';
+      lastPointer.current = { x: e.clientX, y: e.clientY };
+    }
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (isPanning) {
+      e.preventDefault();
+      const dx = e.clientX - lastPointer.current.x;
+      const dy = e.clientY - lastPointer.current.y;
+      setPosition(prev => ({ x: prev.x + dx, y: prev.y + dy }));
+      lastPointer.current = { x: e.clientX, y: e.clientY };
+    }
+  };
+
+  const handlePointerUp = () => {
+    if (isPanning) {
+      setIsPanning(false);
+      document.body.style.cursor = isSpacePressed ? 'grab' : 'default';
+    }
+  };
+
+  const resetCanvasView = () => {
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+  };
+
   return (
     <section
-      className="flex-1 flex flex-col items-center justify-center p-6 overflow-auto relative md:h-full bg-slate-100 dark:bg-zinc-950 bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:20px_20px]"
+      ref={containerRef}
+      className={cn(
+        "flex-1 flex flex-col items-center justify-center overflow-hidden relative md:h-full bg-muted bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:20px_20px]",
+        isSpacePressed ? "cursor-grab" : "cursor-default"
+      )}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
       onDrop={onDrop}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
     >
       {/* Hidden File Input */}
       <input
@@ -79,76 +183,102 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
           </div>
         </div>
       ) : (
-        /* Canvas Container wrapper representing aspect ratios */
-        <div
-          className={cn(
-            "w-full flex items-center justify-center overflow-visible",
-            dragOver && "opacity-50 scale-98 transition-all"
-          )}
-          style={{
-            maxHeight: '74vh',
-            maxWidth: '100%'
-          }}
-        >
-          {/* Actual rendering card */}
+        <>
+          {/* Canvas View Tools (Zoom Reset) */}
+          <div className="absolute bottom-6 right-6 z-20 flex items-center bg-card border border-border rounded-lg shadow-sm overflow-hidden select-none">
+            <button
+              onClick={() => setScale(s => Math.max(0.2, s - 0.1))}
+              className="p-2 hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+              title="Zoom Out"
+            >
+              <IconZoomOut className="w-4 h-4" />
+            </button>
+            <button
+              onClick={resetCanvasView}
+              className="px-3 py-2 text-[10px] font-bold border-x border-border hover:bg-accent text-muted-foreground hover:text-foreground transition-colors min-w-[50px] text-center"
+              title="Reset Zoom & Pan"
+            >
+              {Math.round(scale * 100)}%
+            </button>
+            <button
+              onClick={() => setScale(s => Math.min(3, s + 0.1))}
+              className="p-2 hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+              title="Zoom In"
+            >
+              <IconZoomIn className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Canvas Container wrapper representing aspect ratios and panning */}
           <div
-            ref={previewRef}
-            id="snapshot-capture-canvas"
             className={cn(
-              "relative overflow-hidden flex items-center justify-center shadow-2xl transition-all duration-300 shrink-0",
-              {
-                'aspect-[1/1]': settings.aspectRatio === '1:1',
-                'aspect-[16/9]': settings.aspectRatio === '16:9',
-                'aspect-[4/3]': settings.aspectRatio === '4:3',
-                'aspect-[9/16]': settings.aspectRatio === '9:16',
-                'aspect-auto': settings.aspectRatio === 'auto'
-              }
+              "w-full flex items-center justify-center overflow-visible",
+              dragOver && "opacity-50 transition-all",
+              isPanning ? "pointer-events-none" : ""
             )}
             style={{
-              padding: `${settings.paddingY}px ${settings.paddingX}px`,
-              ...getBackgroundStyles(),
-              maxWidth: '100%',
-              width: settings.aspectRatio !== 'auto' ? '680px' : undefined
+              transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+              transformOrigin: 'center center',
+              transition: isPanning ? 'none' : 'transform 0.1s ease-out'
             }}
           >
-            {/* Custom blurred background graphic layer */}
-            {settings.backgroundType === 'blur' && (
-              <div
-                className="absolute inset-0 bg-cover bg-center scale-110 pointer-events-none select-none transition-all duration-200"
-                style={{
-                  backgroundImage: `url(${imageUrl})`,
-                  filter: `blur(${settings.blurRadius}px) brightness(${settings.blurBrightness}%)`
-                }}
-              />
-            )}
-
-            {/* Screenshot Mockup Card Container */}
-            <div className="relative w-full max-h-full flex items-center justify-center z-10">
-              <WindowFrame
-                frameStyle={settings.frameStyle}
-                browserUrl={settings.browserUrl}
-                windowTitle={settings.windowTitle}
-                roundness={settings.roundness}
-                shadow={settings.shadow}
-                cropTop={settings.cropTop}
-                cropBottom={settings.cropBottom}
-                cropLeft={settings.cropLeft}
-                cropRight={settings.cropRight}
-                screenshotScale={settings.screenshotScale}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={imageUrl}
-                  alt="Screenshot Preview"
-                  className="max-w-full max-h-full block object-contain select-none"
+            {/* Actual rendering card */}
+            <div
+              ref={previewRef}
+              id="snapshot-capture-canvas"
+              className={cn(
+                "relative overflow-hidden flex items-center justify-center shadow-2xl transition-all duration-300 shrink-0",
+                {
+                  'aspect-[1/1]': settings.aspectRatio === '1:1',
+                  'aspect-[16/9]': settings.aspectRatio === '16:9',
+                  'aspect-[4/3]': settings.aspectRatio === '4:3',
+                  'aspect-[9/16]': settings.aspectRatio === '9:16',
+                  'aspect-auto': settings.aspectRatio === 'auto'
+                }
+              )}
+              style={{
+                padding: `${settings.paddingY}px ${settings.paddingX}px`,
+                ...getBackgroundStyles(),
+                width: settings.aspectRatio !== 'auto' ? '680px' : undefined
+              }}
+            >
+              {/* Custom blurred background graphic layer */}
+              {settings.backgroundType === 'blur' && (
+                <div
+                  className="absolute inset-0 bg-cover bg-center scale-110 pointer-events-none select-none transition-all duration-200"
                   style={{
-                    pointerEvents: 'none'
+                    backgroundImage: `url(${imageUrl})`,
+                    filter: `blur(${settings.blurRadius}px) brightness(${settings.blurBrightness}%)`
                   }}
                 />
-              </WindowFrame>
+              )}
+
+              {/* Screenshot Mockup Card Container */}
+              <div className="relative w-full max-h-full flex items-center justify-center z-10">
+                <WindowFrame
+                  frameStyle={settings.frameStyle}
+                  browserUrl={settings.browserUrl}
+                  windowTitle={settings.windowTitle}
+                  roundness={settings.roundness}
+                  shadow={settings.shadow}
+                  cropTop={settings.cropTop}
+                  cropBottom={settings.cropBottom}
+                  cropLeft={settings.cropLeft}
+                  cropRight={settings.cropRight}
+                  screenshotScale={settings.screenshotScale}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={imageUrl}
+                    alt="Screenshot Preview"
+                    className="max-w-full max-h-full block object-contain select-none pointer-events-none"
+                    draggable={false}
+                  />
+                </WindowFrame>
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </section>
   );

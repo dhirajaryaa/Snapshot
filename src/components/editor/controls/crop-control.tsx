@@ -41,7 +41,7 @@ export const CropControl: React.FC<CropControlProps> = ({
             step="1"
             value={settings.screenshotScale}
             onChange={(e) => onUpdateSetting('screenshotScale', parseInt(e.target.value))}
-            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-secondary"
+            className="w-full h-1.5 rounded-lg cursor-pointer accent-brand bg-secondary"
           />
         </div>
 
@@ -69,7 +69,7 @@ export const CropControl: React.FC<CropControlProps> = ({
             step="1"
             value={settings.cropTop}
             onChange={(e) => onUpdateSetting('cropTop', parseInt(e.target.value))}
-            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-secondary"
+            className="w-full h-1.5 rounded-lg cursor-pointer accent-brand bg-secondary"
           />
         </div>
 
@@ -86,7 +86,7 @@ export const CropControl: React.FC<CropControlProps> = ({
             step="1"
             value={settings.cropBottom}
             onChange={(e) => onUpdateSetting('cropBottom', parseInt(e.target.value))}
-            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-secondary"
+            className="w-full h-1.5 rounded-lg cursor-pointer accent-brand bg-secondary"
           />
         </div>
 
@@ -103,7 +103,7 @@ export const CropControl: React.FC<CropControlProps> = ({
             step="1"
             value={settings.cropLeft}
             onChange={(e) => onUpdateSetting('cropLeft', parseInt(e.target.value))}
-            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-secondary"
+            className="w-full h-1.5 rounded-lg cursor-pointer accent-brand bg-secondary"
           />
         </div>
 
@@ -120,7 +120,7 @@ export const CropControl: React.FC<CropControlProps> = ({
             step="1"
             value={settings.cropRight}
             onChange={(e) => onUpdateSetting('cropRight', parseInt(e.target.value))}
-            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-secondary"
+            className="w-full h-1.5 rounded-lg cursor-pointer accent-brand bg-secondary"
           />
         </div>
       </div>

@@ -64,7 +64,7 @@ export const LayoutControl: React.FC<LayoutControlProps> = ({
               step="4"
               value={settings.paddingX}
               onChange={(e) => onUpdateSetting('paddingX', parseInt(e.target.value))}
-              className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-muted"
+              className="w-full h-1.5 rounded-lg cursor-pointer accent-brand bg-secondary"
             />
           </div>
           <div className="space-y-1.5">
@@ -79,7 +79,7 @@ export const LayoutControl: React.FC<LayoutControlProps> = ({
               step="4"
               value={settings.paddingY}
               onChange={(e) => onUpdateSetting('paddingY', parseInt(e.target.value))}
-              className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-muted"
+              className="w-full h-1.5 rounded-lg cursor-pointer accent-brand bg-secondary"
             />
           </div>
         </div>

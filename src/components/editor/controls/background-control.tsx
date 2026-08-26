@@ -111,7 +111,7 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                     step="15"
                     value={settings.gradientAngle}
                     onChange={(e) => onUpdateSetting('gradientAngle', parseInt(e.target.value))}
-                    className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-muted"
+                    className="w-full h-1.5 rounded-lg cursor-pointer accent-brand bg-muted"
                   />
                 </div>
               </div>
@@ -200,7 +200,7 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                       step="5"
                       value={settings.customGradientAngle}
                       onChange={(e) => onUpdateSetting('customGradientAngle', parseInt(e.target.value))}
-                      className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-muted"
+                      className="w-full h-1.5 rounded-lg cursor-pointer accent-brand bg-muted"
                     />
                   </div>
                 )}
@@ -287,7 +287,7 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                 step="2"
                 value={settings.blurRadius}
                 onChange={(e) => onUpdateSetting('blurRadius', parseInt(e.target.value))}
-                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-muted"
+                className="w-full h-1.5 rounded-lg cursor-pointer accent-brand bg-muted"
               />
             </div>
 
@@ -303,7 +303,7 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                 step="5"
                 value={settings.blurBrightness}
                 onChange={(e) => onUpdateSetting('blurBrightness', parseInt(e.target.value))}
-                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-muted"
+                className="w-full h-1.5 rounded-lg cursor-pointer accent-brand bg-muted"
               />
             </div>
           </div>

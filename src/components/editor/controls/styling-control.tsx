@@ -33,7 +33,7 @@ export const StylingControl: React.FC<StylingControlProps> = ({
             step="2"
             value={settings.roundness}
             onChange={(e) => onUpdateSetting('roundness', parseInt(e.target.value))}
-            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-secondary"
+            className="w-full h-1.5 rounded-lg cursor-pointer accent-brand bg-secondary"
           />
         </div>
 
