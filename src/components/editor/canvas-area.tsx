@@ -152,7 +152,7 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
       />
 
       {!imageUrl ? (
-        <div className="flex flex-col items-center justify-center text-center p-8 max-w-md animate-in zoom-in-95 duration-300 bg-card border border-border rounded-2xl shadow-sm z-10">
+        <div className="flex flex-col items-center justify-center text-center p-8 max-w-md animate-in zoom-in-95 duration-300 bg-card border border-border rounded-2xl shadow-sm z-10 mx-4">
           <div className="w-16 h-16 rounded-2xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand mb-6 shadow-sm">
             <IconUpload className="w-7 h-7" />
           </div>

@@ -20,6 +20,7 @@ interface SidebarAreaProps {
   updateSetting: <K extends keyof EditorSettings>(key: K, value: EditorSettings[K]) => void;
   customSolid: string;
   setCustomSolid: (val: string) => void;
+  mobileSidebarOpen: boolean;
 }
 
 export const SidebarArea: React.FC<SidebarAreaProps> = ({
@@ -30,10 +31,14 @@ export const SidebarArea: React.FC<SidebarAreaProps> = ({
   applyPreset,
   updateSetting,
   customSolid,
-  setCustomSolid
+  setCustomSolid,
+  mobileSidebarOpen
 }) => {
   return (
-    <section className="w-full md:w-80 border-r border-border flex flex-col overflow-y-auto shrink-0 md:h-full select-none bg-card text-card-foreground">
+    <section className={cn(
+      "fixed inset-y-0 left-0 z-40 w-72 sm:w-80 border-r border-border flex flex-col overflow-y-auto select-none bg-card text-card-foreground transition-transform duration-300 ease-in-out md:relative md:translate-x-0",
+      mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
+    )}>
       <div className="flex-1">
         {/* 1. Presets */}
         <PresetsControl

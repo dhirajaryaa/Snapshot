@@ -41,9 +41,9 @@ export default function LandingPage() {
       {/* Header navbar */}
       <header className="h-20 mt-4 flex items-center justify-between px-6 md:px-12 max-w-7xl w-full mx-auto z-10">
         <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-lg overflow-hidden bg-brand shadow-sm flex items-center justify-center">
+          <div className="w-9 h-9 rounded-lg overflow-hidden bg-brand/80 shadow-sm flex items-center justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Snapshot Logo" className="w-full h-full object-contain" />
+            <img src="/logo.png" alt="Snapshot Logo" className="w-full h-full object-contain p-1" />
           </div>
           <span className="text-xl font-bold tracking-tight text-neutral-900">Snapshot</span>
         </div>

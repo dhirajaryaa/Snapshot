@@ -28,6 +28,9 @@ export function SnapshotEditor() {
   const [customSolid, setCustomSolid] = useState<string>('#4F46E5');
   const [dragOver, setDragOver] = useState<boolean>(false);
 
+  // Mobile sidebar drawer open/close
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
   const previewRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -279,7 +282,7 @@ export function SnapshotEditor() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col font-sans transition-colors duration-300 bg-background text-foreground">
+    <div className="min-h-screen w-full flex flex-col font-sans transition-colors duration-300 bg-background text-foreground relative">
       {/* Toast Notification */}
       {toast && (
         <div className="fixed top-5 right-5 z-50 flex items-center space-x-2.5 px-4 py-3 rounded-lg shadow-xl border animate-in slide-in-from-top-4 duration-300 bg-card border-brand text-card-foreground">
@@ -298,11 +301,13 @@ export function SnapshotEditor() {
         onDownload={handleDownload}
         onCopyToClipboard={handleCopyToClipboard}
         isExporting={isExporting}
+        mobileSidebarOpen={mobileSidebarOpen}
+        onToggleSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
       />
 
       {/* Main Workspace */}
-      <main className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        {/* Left Side: Controls Panel */}
+      <main className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+        {/* Left Side Settings Sidebar (Drawer on mobile, Pinned on desktop) */}
         <SidebarArea
           settings={settings}
           theme={theme}
@@ -312,7 +317,16 @@ export function SnapshotEditor() {
           updateSetting={updateSetting}
           customSolid={customSolid}
           setCustomSolid={setCustomSolid}
+          mobileSidebarOpen={mobileSidebarOpen}
         />
+
+        {/* Drawer Backdrop Overlay (Mobile only) */}
+        {mobileSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-[1px] z-30 md:hidden animate-in fade-in duration-200"
+            onClick={() => setMobileSidebarOpen(false)}
+          />
+        )}
 
         {/* Right Side: Preview Work area */}
         <CanvasArea
