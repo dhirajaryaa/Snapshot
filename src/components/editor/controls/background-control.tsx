@@ -6,7 +6,6 @@ import { IconPhoto, IconCheck } from '@tabler/icons-react';
 
 interface BackgroundControlProps {
   settings: EditorSettings;
-  theme: 'light' | 'dark';
   activeSection: string;
   onToggleSection: (id: string) => void;
   onUpdateSetting: <K extends keyof EditorSettings>(key: K, value: EditorSettings[K]) => void;
@@ -16,7 +15,6 @@ interface BackgroundControlProps {
 
 export const BackgroundControl: React.FC<BackgroundControlProps> = ({
   settings,
-  theme,
   activeSection,
   onToggleSection,
   onUpdateSetting,
@@ -24,10 +22,10 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
   setCustomSolid
 }) => {
   return (
-    <AccordionSection id="background" title="Background Graphic" icon={IconPhoto} activeSection={activeSection} onToggle={onToggleSection} theme={theme}>
+    <AccordionSection id="background" title="Background Graphic" icon={IconPhoto} activeSection={activeSection} onToggle={onToggleSection}>
       <div className="space-y-4">
         {/* Selector for Background Type */}
-        <div className="flex rounded-lg p-0.5 bg-neutral-900 border border-neutral-800">
+        <div className="flex rounded-lg p-0.5 bg-muted border border-border">
           {[
             { label: 'Gradient', value: 'gradient' },
             { label: 'Solid', value: 'solid' },
@@ -39,10 +37,10 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                 key={type.value}
                 onClick={() => onUpdateSetting('backgroundType', type.value as any)}
                 className={cn(
-                  "flex-1 py-1 text-[11px] font-bold rounded-md transition-all text-center",
+                  "flex-1 py-1 text-[11px] font-bold rounded-md transition-all text-center duration-200",
                   isSelected
-                    ? "bg-brand text-white"
-                    : "text-neutral-400 hover:text-neutral-200"
+                    ? "bg-brand text-white shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {type.label}
@@ -54,12 +52,12 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
         {/* Gradient Section */}
         {settings.backgroundType === 'gradient' && (
           <div className="space-y-4">
-            <div className="flex space-x-2 border-b border-neutral-800 pb-2">
+            <div className="flex space-x-2 border-b border-border pb-2">
               <button
                 onClick={() => onUpdateSetting('backgroundGradientMode', 'preset')}
                 className={cn(
                   "text-[11px] font-bold pb-1 transition-all",
-                  settings.backgroundGradientMode === 'preset' ? "text-brand border-b-2 border-brand" : "text-neutral-500 hover:text-neutral-300"
+                  settings.backgroundGradientMode === 'preset' ? "text-brand border-b-2 border-brand" : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 Presets
@@ -68,7 +66,7 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                 onClick={() => onUpdateSetting('backgroundGradientMode', 'custom')}
                 className={cn(
                   "text-[11px] font-bold pb-1 transition-all",
-                  settings.backgroundGradientMode === 'custom' ? "text-brand border-b-2 border-brand" : "text-neutral-500 hover:text-neutral-300"
+                  settings.backgroundGradientMode === 'custom' ? "text-brand border-b-2 border-brand" : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 Custom Builder
@@ -113,7 +111,7 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                     step="15"
                     value={settings.gradientAngle}
                     onChange={(e) => onUpdateSetting('gradientAngle', parseInt(e.target.value))}
-                    className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-neutral-800"
+                    className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-muted"
                   />
                 </div>
               </div>
@@ -122,12 +120,12 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                 <div className="space-y-2">
                   <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Color Stops</label>
                   <div className="flex space-x-2">
-                    <div className="flex items-center flex-1 space-x-2 bg-neutral-900 rounded-lg p-1.5 border border-neutral-800">
+                    <div className="flex items-center flex-1 space-x-2 bg-muted rounded-lg p-1.5 border border-border">
                       <input
                         type="color"
                         value={settings.customGradientColor1}
                         onChange={(e) => onUpdateSetting('customGradientColor1', e.target.value)}
-                        className="w-6 h-6 rounded cursor-pointer border border-neutral-700 bg-transparent shrink-0"
+                        className="w-6 h-6 rounded cursor-pointer border border-border bg-transparent shrink-0"
                       />
                       <input
                         type="text"
@@ -137,15 +135,15 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                             onUpdateSetting('customGradientColor1', e.target.value);
                           }
                         }}
-                        className="flex-1 bg-transparent border-none text-[10px] font-mono outline-none text-neutral-300 w-full"
+                        className="flex-1 bg-transparent border-none text-[10px] font-mono outline-none text-foreground w-full"
                       />
                     </div>
-                    <div className="flex items-center flex-1 space-x-2 bg-neutral-900 rounded-lg p-1.5 border border-neutral-800">
+                    <div className="flex items-center flex-1 space-x-2 bg-muted rounded-lg p-1.5 border border-border">
                       <input
                         type="color"
                         value={settings.customGradientColor2}
                         onChange={(e) => onUpdateSetting('customGradientColor2', e.target.value)}
-                        className="w-6 h-6 rounded cursor-pointer border border-neutral-700 bg-transparent shrink-0"
+                        className="w-6 h-6 rounded cursor-pointer border border-border bg-transparent shrink-0"
                       />
                       <input
                         type="text"
@@ -155,7 +153,7 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                             onUpdateSetting('customGradientColor2', e.target.value);
                           }
                         }}
-                        className="flex-1 bg-transparent border-none text-[10px] font-mono outline-none text-neutral-300 w-full"
+                        className="flex-1 bg-transparent border-none text-[10px] font-mono outline-none text-foreground w-full"
                       />
                     </div>
                   </div>
@@ -163,15 +161,29 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
 
                 <div className="space-y-2">
                   <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Gradient Type</label>
-                  <div className="flex rounded-lg p-0.5 bg-neutral-900 border border-neutral-800">
+                  <div className="flex rounded-lg p-0.5 bg-muted border border-border">
                     <button
                       onClick={() => onUpdateSetting('customGradientType', 'linear')}
-                      className={cn("flex-1 py-1 text-[11px] font-bold rounded-md transition-all text-center", settings.customGradientType === 'linear' ? "bg-neutral-700 text-white" : "text-neutral-500")}
-                    >Linear</button>
+                      className={cn(
+                        "flex-1 py-1 text-[11px] font-bold rounded-md transition-all text-center duration-200",
+                        settings.customGradientType === 'linear'
+                          ? "bg-card text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      Linear
+                    </button>
                     <button
                       onClick={() => onUpdateSetting('customGradientType', 'radial')}
-                      className={cn("flex-1 py-1 text-[11px] font-bold rounded-md transition-all text-center", settings.customGradientType === 'radial' ? "bg-neutral-700 text-white" : "text-neutral-500")}
-                    >Radial</button>
+                      className={cn(
+                        "flex-1 py-1 text-[11px] font-bold rounded-md transition-all text-center duration-200",
+                        settings.customGradientType === 'radial'
+                          ? "bg-card text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      Radial
+                    </button>
                   </div>
                 </div>
 
@@ -188,7 +200,7 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                       step="5"
                       value={settings.customGradientAngle}
                       onChange={(e) => onUpdateSetting('customGradientAngle', parseInt(e.target.value))}
-                      className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-neutral-800"
+                      className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-muted"
                     />
                   </div>
                 )}
@@ -219,7 +231,7 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                   >
                     {isSelected && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-lg">
-                        <IconCheck className="w-4 h-4 text-white" />
+                        <IconCheck className="w-4.5 h-4.5 text-white" />
                       </div>
                     )}
                   </button>
@@ -238,7 +250,7 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                     setCustomSolid(e.target.value);
                     onUpdateSetting('backgroundColor', e.target.value);
                   }}
-                  className="w-8 h-8 rounded cursor-pointer border border-neutral-700 bg-transparent"
+                  className="w-8 h-8 rounded cursor-pointer border border-border bg-transparent shrink-0"
                 />
                 <input
                   type="text"
@@ -249,12 +261,7 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                       onUpdateSetting('backgroundColor', e.target.value);
                     }
                   }}
-                  className={cn(
-                    "flex-1 px-2.5 py-1.5 rounded-lg border text-xs font-mono uppercase",
-                    theme === 'dark'
-                      ? "bg-neutral-900 border-neutral-800 text-neutral-200"
-                      : "bg-neutral-50 border-neutral-200 text-neutral-700"
-                  )}
+                  className="flex-1 px-2.5 py-1.5 rounded-lg border border-border bg-muted text-foreground text-xs font-mono uppercase focus:border-brand focus:ring-1 focus:ring-brand outline-none"
                 />
               </div>
             </div>
@@ -264,10 +271,7 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
         {/* Blur Image Background */}
         {settings.backgroundType === 'blur' && (
           <div className="space-y-4">
-            <div className={cn(
-              "p-3 rounded-lg border text-[11px] opacity-80 leading-relaxed mb-2",
-              theme === 'dark' ? "bg-neutral-900/40 border-neutral-800 text-neutral-400" : "bg-neutral-50 border-neutral-200 text-neutral-600"
-            )}>
+            <div className="p-3 rounded-lg border border-border bg-muted/50 text-[11px] opacity-80 leading-relaxed mb-2 text-muted-foreground">
               <span>Your uploaded screenshot itself will be heavily blurred and stretched to create a modern, color-matched backplate.</span>
             </div>
 
@@ -283,7 +287,7 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                 step="2"
                 value={settings.blurRadius}
                 onChange={(e) => onUpdateSetting('blurRadius', parseInt(e.target.value))}
-                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-neutral-800"
+                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-muted"
               />
             </div>
 
@@ -299,7 +303,7 @@ export const BackgroundControl: React.FC<BackgroundControlProps> = ({
                 step="5"
                 value={settings.blurBrightness}
                 onChange={(e) => onUpdateSetting('blurBrightness', parseInt(e.target.value))}
-                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-neutral-800"
+                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand bg-muted"
               />
             </div>
           </div>

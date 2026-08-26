@@ -10,12 +10,18 @@ export interface EditorSettings {
   customGradientAngle: number;
   blurRadius: number;
   blurBrightness: number;
+  cropTop: number;
+  cropBottom: number;
+  cropLeft: number;
+  cropRight: number;
+  screenshotScale: number;
   paddingX: number;
   paddingY: number;
   roundness: number;
   shadow: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   frameStyle: 'none' | 'macos-light' | 'macos-dark' | 'windows-light' | 'windows-dark' | 'browser-light' | 'browser-dark' | 'phone-portrait' | 'tablet-portrait' | 'phone-landscape' | 'tablet-landscape';
   browserUrl: string;
+  windowTitle: string;
   aspectRatio: 'auto' | '1:1' | '16:9' | '4:3' | '9:16';
   exportFormat: 'png' | 'jpeg';
   exportScale: 1 | 2 | 3;
@@ -30,10 +36,10 @@ export interface Preset {
 
 export const BACKGROUND_PRESETS = {
   gradients: [
-    { name: 'Brand Indigo', value: 'linear-gradient(135deg, #192d75 0%, #3b5998 50%, #8b9dc3 100%)' },
+    { name: 'Brand Indigo', value: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #818cf8 100%)' },
     { name: 'Sunset Glow', value: 'linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%)' },
     { name: 'Ocean Breeze', value: 'linear-gradient(135deg, #2b5876 0%, #4e4376 100%)' },
-    { name: 'Hyper Space', value: 'linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #192d75 100%)' },
+    { name: 'Hyper Space', value: 'linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #4f46e5 100%)' },
     { name: 'Cyberpunk', value: 'linear-gradient(135deg, #f857a6 0%, #ff5858 100%)' },
     { name: 'Emerald Silk', value: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)' },
     { name: 'Cotton Candy', value: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)' },
@@ -51,7 +57,7 @@ export const BACKGROUND_PRESETS = {
     { name: 'Warm Flame', value: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)' }
   ],
   solids: [
-    { name: 'Snapshot Brand', value: '#192d75' },
+    { name: 'Snapshot Brand', value: '#4f46e5' },
     { name: 'Slate Dark', value: '#0f172a' },
     { name: 'Slate Light', value: '#f8fafc' },
     { name: 'Pure White', value: '#ffffff' },
@@ -150,7 +156,7 @@ export const SOCIAL_PRESETS: Preset[] = [
 
 export const DEFAULT_SETTINGS: EditorSettings = {
   backgroundType: 'gradient',
-  backgroundColor: '#192d75',
+  backgroundColor: '#4f46e5',
   backgroundGradient: BACKGROUND_PRESETS.gradients[0].value,
   gradientAngle: 135,
   backgroundGradientMode: 'preset',
@@ -160,12 +166,18 @@ export const DEFAULT_SETTINGS: EditorSettings = {
   customGradientAngle: 135,
   blurRadius: 32,
   blurBrightness: 75,
+  cropTop: 0,
+  cropBottom: 0,
+  cropLeft: 0,
+  cropRight: 0,
+  screenshotScale: 100,
   paddingX: 64,
   paddingY: 48,
   roundness: 12,
   shadow: 'xl',
   frameStyle: 'macos-dark',
   browserUrl: 'snapshot.dev',
+  windowTitle: 'Untitled Window',
   aspectRatio: 'auto',
   exportFormat: 'png',
   exportScale: 2

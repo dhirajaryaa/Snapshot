@@ -14,16 +14,28 @@ interface WindowFrameProps {
   children: React.ReactNode;
   frameStyle: 'none' | 'macos-light' | 'macos-dark' | 'windows-light' | 'windows-dark' | 'browser-light' | 'browser-dark' | 'phone-portrait' | 'tablet-portrait' | 'phone-landscape' | 'tablet-landscape';
   browserUrl: string;
+  windowTitle: string;
   roundness: number;
   shadow: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  cropTop: number;
+  cropBottom: number;
+  cropLeft: number;
+  cropRight: number;
+  screenshotScale: number;
 }
 
 export const WindowFrame: React.FC<WindowFrameProps> = ({
   children,
   frameStyle,
   browserUrl,
+  windowTitle,
   roundness,
-  shadow
+  shadow,
+  cropTop,
+  cropBottom,
+  cropLeft,
+  cropRight,
+  screenshotScale
 }) => {
   const getShadowClass = () => ({
     'shadow-none': shadow === 'none',
@@ -34,13 +46,24 @@ export const WindowFrame: React.FC<WindowFrameProps> = ({
     'shadow-2xl': shadow === '2xl',
   });
 
+  const imgStyle: React.CSSProperties = {
+    clipPath: `inset(${cropTop}% ${cropRight}% ${cropBottom}% ${cropLeft}%)`,
+    transform: `scale(${screenshotScale / 100})`,
+    transformOrigin: 'center center',
+    transition: 'transform 0.1s ease-out',
+  };
+
   if (frameStyle === 'none') {
     return (
       <div
-        className={cn("overflow-hidden transition-all duration-200", getShadowClass())}
+        className={cn("overflow-hidden transition-all duration-200 w-full h-full flex items-center justify-center bg-transparent", getShadowClass())}
         style={{ borderRadius: `${roundness}px` }}
       >
-        {children}
+        <div className="w-full h-full relative overflow-hidden flex items-center justify-center [&>img]:max-w-full [&>img]:max-h-full [&>img]:block [&>img]:object-contain">
+          <div style={imgStyle} className="w-full h-full flex items-center justify-center">
+            {children}
+          </div>
+        </div>
       </div>
     );
   }
@@ -99,8 +122,10 @@ export const WindowFrame: React.FC<WindowFrameProps> = ({
           )}
 
           {/* Image Content Container */}
-          <div className="w-full h-full [&>img]:w-full [&>img]:h-full [&>img]:object-cover [&>img]:object-top">
-            {children}
+          <div className="w-full h-full relative overflow-hidden flex items-center justify-center [&>img]:w-full [&>img]:h-full [&>img]:object-cover [&>img]:object-top">
+            <div style={imgStyle} className="w-full h-full">
+              {children}
+            </div>
           </div>
         </div>
       </div>
@@ -130,8 +155,8 @@ export const WindowFrame: React.FC<WindowFrameProps> = ({
             <span className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] block" />
             <span className="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29] block" />
           </div>
-          <div className="flex-1 text-center text-xs font-medium opacity-60 truncate px-8">
-            Untitled Window
+          <div className="flex-1 text-center text-xs font-medium opacity-80 truncate px-8">
+            {windowTitle || 'Untitled Window'}
           </div>
         </div>
       )}
@@ -141,8 +166,8 @@ export const WindowFrame: React.FC<WindowFrameProps> = ({
           "flex items-center justify-between h-9 pl-3 pr-1 select-none border-b",
           isDark ? "bg-[#1f1f1f] border-neutral-800" : "bg-neutral-100 border-neutral-200"
         )}>
-          <div className="text-xs font-normal opacity-70 truncate">
-            Untitled Window
+          <div className="text-xs font-normal opacity-80 truncate">
+            {windowTitle || 'Untitled Window'}
           </div>
           <div className="flex items-center h-full text-xs">
             <div className={cn("flex items-center justify-center w-10 h-full transition-colors", isDark ? "hover:bg-neutral-800" : "hover:bg-neutral-200")}>
@@ -176,7 +201,7 @@ export const WindowFrame: React.FC<WindowFrameProps> = ({
               isDark ? "bg-[#222226] border-neutral-800 text-neutral-200" : "bg-white border-neutral-200 text-neutral-700"
             )}>
               <IconWorld className="w-3 h-3 mr-1.5 opacity-60" />
-              <span className="truncate">{browserUrl || 'Untitled page'}</span>
+              <span className="truncate">{windowTitle || browserUrl || 'Untitled page'}</span>
             </div>
           </div>
           <div className={cn(
@@ -201,8 +226,10 @@ export const WindowFrame: React.FC<WindowFrameProps> = ({
       )}
 
       {/* Main Content (Screenshot) */}
-      <div className="w-full h-full relative overflow-hidden flex items-center justify-center bg-transparent">
-        {children}
+      <div className="w-full h-full relative overflow-hidden flex items-center justify-center bg-transparent [&>img]:max-w-full [&>img]:max-h-full [&>img]:block [&>img]:object-contain">
+        <div style={imgStyle} className="w-full h-full flex items-center justify-center">
+          {children}
+        </div>
       </div>
     </div>
   );
