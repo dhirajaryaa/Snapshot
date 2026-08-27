@@ -14,6 +14,7 @@ import { SidebarArea } from './editor/sidebar-area';
 import { CanvasArea } from './editor/canvas-area';
 
 import { toPng, toJpeg } from 'html-to-image';
+import { trackExport, trackImageAdded, trackPresetApplied } from '@/lib/analytics';
 
 // Default mockup screen data URL
 const SAMPLE_IMAGE = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="480" viewBox="0 0 800 480"><rect width="800" height="480" fill="%230c1020"/><rect x="40" y="40" width="720" height="400" rx="8" fill="%23131930" stroke="%231d274f" stroke-width="1"/><circle cx="70" cy="65" r="6" fill="%23ef4444"/><circle cx="90" cy="65" r="6" fill="%23f59e0b"/><circle cx="110" cy="65" r="6" fill="%2310b981"/><text x="50" y="110" fill="%234f46e5" font-family="monospace" font-size="13" font-weight="bold">// Welcome to Snapshot!</text><text x="50" y="140" fill="%236366f1" font-family="monospace" font-size="13" font-weight="bold">const</text><text x="95" y="140" fill="%23e2e8f0" font-family="monospace" font-size="13">snapshot</text><text x="165" y="140" fill="%236366f1" font-family="monospace" font-size="13">=</text><text x="180" y="140" fill="%2338bdf8" font-family="monospace" font-size="13">beautify</text><text x="245" y="140" fill="%23e2e8f0" font-family="monospace" font-size="13">(screenshot) =&gt; {</text><text x="80" y="170" fill="%236366f1" font-family="monospace" font-size="13">return</text><text x="135" y="170" fill="%23e2e8f0" font-family="monospace" font-size="13">{ ...screenshot, style: </text><text x="310" y="170" fill="%2310b981" font-family="monospace" font-size="13">'amazing'</text><text x="385" y="170" fill="%23e2e8f0" font-family="monospace" font-size="13"> };</text><text x="50" y="200" fill="%23e2e8f0" font-family="monospace" font-size="13">};</text><text x="50" y="240" fill="%236366f1" font-family="monospace" font-size="13">export default</text><text x="165" y="240" fill="%2338bdf8" font-family="monospace" font-size="13">beautify</text><text x="230" y="240" fill="%23e2e8f0" font-family="monospace" font-size="13">;</text><rect x="50" y="280" width="700" height="130" rx="6" fill="%23090d16" stroke="%23171e36" stroke-width="1"/><text x="70" y="315" fill="%2364748b" font-family="monospace" font-size="12">$ bun run dev</text><text x="70" y="345" fill="%2310b981" font-family="monospace" font-size="12">✓ Snapshot is running on http://localhost:3000</text><text x="70" y="375" fill="%2338bdf8" font-family="monospace" font-size="12">ℹ Drag &amp; drop your screenshot or paste directly here to begin!</text></svg>`;
@@ -56,6 +57,7 @@ export function SnapshotEditor() {
             reader.onload = (event) => {
               if (event.target?.result) {
                 setImageUrl(event.target.result as string);
+                trackImageAdded('paste');
                 showToast('Image pasted from clipboard!', 'success');
               }
             };
@@ -76,6 +78,7 @@ export function SnapshotEditor() {
       const params = new URLSearchParams(window.location.search);
       if (params.get('sample') === 'true') {
         setImageUrl(SAMPLE_IMAGE);
+        trackImageAdded('sample');
       }
     }
   }, []);
@@ -93,6 +96,7 @@ export function SnapshotEditor() {
   // Load sample image
   const handleUseSample = () => {
     setImageUrl(SAMPLE_IMAGE);
+    trackImageAdded('sample');
     showToast('Loaded sample screenshot!', 'info');
   };
 
@@ -104,6 +108,7 @@ export function SnapshotEditor() {
       reader.onload = (event) => {
         if (event.target?.result) {
           setImageUrl(event.target.result as string);
+          trackImageAdded('upload');
           showToast('Screenshot uploaded successfully!');
         }
       };
@@ -130,6 +135,7 @@ export function SnapshotEditor() {
       reader.onload = (event) => {
         if (event.target?.result) {
           setImageUrl(event.target.result as string);
+          trackImageAdded('drop');
           showToast('Screenshot dropped and loaded!');
         }
       };
@@ -145,6 +151,7 @@ export function SnapshotEditor() {
       ...prev,
       ...preset.settings
     }));
+    trackPresetApplied(preset.name);
     showToast(`Applied ${preset.name} preset!`, 'success');
   };
 
@@ -210,6 +217,7 @@ export function SnapshotEditor() {
     link.download = `snapshot-${Date.now()}.${settings.exportFormat}`;
     link.href = dataUrl;
     link.click();
+    trackExport('download', settings.exportFormat, settings.exportScale);
     showToast(`Downloaded ${settings.exportFormat.toUpperCase()} at ${settings.exportScale}x scale!`, 'success');
   };
 
@@ -239,6 +247,7 @@ export function SnapshotEditor() {
         await navigator.clipboard.write([
           new ClipboardItem({ 'image/png': blob })
         ]);
+        trackExport('copy', 'png', settings.exportScale);
         showToast('Image copied to clipboard! Ready to share.', 'success');
       } else {
         throw new Error('Blob generation failed');
